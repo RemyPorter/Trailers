@@ -23,6 +23,8 @@ The `draw` and `setup` methods are in `Trailers.pde`. It runs as any other sketc
 ### Designing
 In `SetupSystem.pde` there are two methods, `buildSequence` and `buildFilters`. These both use a builder-pattern API, which allows you to add transformations and filters to the output. This is the main thing you need to edit to create your own pictures.
 
+Check [SampleSequences](SampleSequences.md) for examples.
+
 #### SequenceBuilder
 The `SequenceBuilder` API has the following methods:
 
