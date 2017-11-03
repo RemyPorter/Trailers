@@ -2,7 +2,6 @@ import java.util.UUID;
 
 
 boolean running = true;
-boolean applyFilters = false;
 Sequence s = null;
 
 void setup() {
@@ -21,13 +20,18 @@ void draw() {
   if (running) {
     s.build();
   }
-  PGraphics frame = render(s);
-  
-  image(frame,0,0);
+  PGraphics frame = buildFrame(width, height);
+  image(frame, 0, 0);
+}
+
+PGraphics buildFrame(float width, float height) {
+  PGraphics frame = render(s, width, height);
+  return frame;
 }
 
 void saveImage() {
-  PImage highres = render(s, width*4,height*4);
+  PGraphics highres = buildFrame(width*4,height*4);
+  highres = backdrop(highres);
   String fname = UUID.randomUUID().toString() + ".tif";
   highres.save("images/" + fname);
 }
@@ -35,8 +39,6 @@ void saveImage() {
 void keyPressed() {
   switch (key) {
     case ' ': running = !running;
-              break;
-    case 'f': applyFilters = !applyFilters;
               break;
     case 's': saveImage();
               break;
