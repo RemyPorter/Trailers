@@ -8,8 +8,10 @@ interface Transform {
 class Pen implements Transform {
   PVector offset;
   PVector lastPos;
-  public Pen(PVector offset) {
+  int col;
+  public Pen(PVector offset, int col) {
     this.offset = offset;
+    this.col = col;
   }
   public void transform() {
     //translate(offset.x, offset.y);
@@ -21,7 +23,7 @@ class Pen implements Transform {
     }
     LineSegment res = new LineSegment(
       lastPos.x, lastPos.y,
-      p.x, p.y);
+      p.x, p.y, col);
     lastPos = p;
     return res;
   }

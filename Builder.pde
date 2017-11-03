@@ -10,7 +10,7 @@ class SequenceBuilder {
     return s;
   }
   SequenceBuilder pen() {
-    return pen(new PVector(0,0));
+    return pen(0,0);
   }
 
   SequenceBuilder anchor(float x, float y) {
@@ -22,20 +22,24 @@ class SequenceBuilder {
     return this;
   }
 
-  SequenceBuilder pen(float x, float y) {
-    return pen(new PVector(x, y));
-  }
-
-  SequenceBuilder pen(PVector pos) {
-    s.add(new Pen(pos));
+  SequenceBuilder pen(PVector pos, int col) {
+    s.add(new Pen(pos, col));
     return this;
   }
 
+  SequenceBuilder pen(float x, float y) {
+    return pen(new PVector(x, y), color(255,255,255,100));
+  }
+
+  SequenceBuilder pen(float x, float y, int col) {
+    return pen(new PVector(x,y), col);
+  }
+
   SequenceBuilder pens(PVector pos, PVector step, int n) {
-    s.add(new Pen(pos));
+    s.add(new Pen(pos, color(255,255,255,100)));
     for (int i = 1; i < n; i++) {
       pos = PVector.add(pos, step);
-      s.add(new Pen(pos));
+      s.add(new Pen(pos, color(255,255,255,100)));
     }
     return this;
   }
