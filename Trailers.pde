@@ -10,7 +10,6 @@ void setup() {
   //fullScreen(P3D);
   stroke(255,255,255,255/3);
   fill(255);
-  buildPalettes();
   setupFx();
   background(0);
   clear();
