@@ -1,3 +1,8 @@
+PGraphics buildFrame(float width, float height) {
+  PGraphics frame = render(s, width, height);
+  return frame;
+}
+
 PGraphics render(Sequence s) {
   return render(s, width,height);
 }
