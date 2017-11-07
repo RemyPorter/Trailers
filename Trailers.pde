@@ -4,10 +4,11 @@ import java.util.UUID;
 boolean running = true;
 Sequence s = null;
 boolean record = false;
+boolean withFx = false;
 
 void setup() {
-  size(640,640,P3D);
-  //fullScreen(P3D);
+  //size(640,640,P3D);
+  fullScreen(P3D);
   stroke(255,255,255,255/3);
   fill(255);
   setupFx();
@@ -16,9 +17,13 @@ void setup() {
   s = buildSequence();
 }
 
-PGraphics frameWithFx(int width, int height) {
+PGraphics frameWithFx(boolean withFx, int width, int height) {
   PGraphics frame = buildFrame(width, height);
-  return applyFx(frame);
+  if (withFx) {
+    return applyFx(frame);
+  } else {
+    return frame;
+  }
 }
 
 void draw() {
@@ -26,7 +31,7 @@ void draw() {
   if (running) {
     s.build();
   }
-  PGraphics frame = frameWithFx(width, height);
+  PGraphics frame = frameWithFx(withFx, width, height);
   image(frame, 0, 0);
   if (record) {
     saveFrame("animated/#####.png");
@@ -36,7 +41,7 @@ void draw() {
 
 
 void save() {
-  saveImage(frameWithFx(width*2,height*2));
+  saveImage(frameWithFx(withFx, width*2,height*2));
 }
 
 void keyPressed() {
@@ -45,5 +50,6 @@ void keyPressed() {
               break;
     case 's': save();
               break;
+    case 'f': withFx = ! withFx;
   }
 }
