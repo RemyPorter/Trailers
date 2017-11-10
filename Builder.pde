@@ -62,7 +62,11 @@ class SequenceBuilder {
   }
 
   SequenceBuilder rotator(float x, float y, float speed) {
-    s.add(new Rotator(new PVector(x, y), speed));
+    return this.rotator(new PVector(x,y), speed);
+  }
+
+  SequenceBuilder rotator(PVector p, float speed) {
+    s.add(new Rotator(p, speed));
     return this;
   }
 
@@ -77,6 +81,11 @@ class SequenceBuilder {
 
   SequenceBuilder ellipse(float x, float y, float major, float minor, float speed) {
     s.add(new Ellipse(v(x,y),major,minor,speed));
+    return this;
+  }
+
+  SequenceBuilder sin(float x, float y, float scaleX, float scaleY, float speed) {
+    s.add(new SinTranslator(new PVector(x,y), scaleX, scaleY, speed));
     return this;
   }
 }

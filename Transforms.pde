@@ -188,3 +188,20 @@ class Ellipse implements Transform {
     translate(x, y * dir);
   }
 }
+
+class SinTranslator implements Transform{
+  float scaleX, scaleY, tick, speed;
+  PVector center;
+  public SinTranslator(PVector center, float scaleX, float scaleY, float speed) {
+    this.scaleX = scaleX;
+    this.scaleY = scaleY;
+    this.speed = speed;
+    this.center = center;
+  }
+
+  public LineSegment draw() { return null; }
+  public void transform() {
+    translate(center.x + sin(tick) * scaleX, center.y + cos(tick) * scaleY);
+    tick += speed;
+  }
+}
