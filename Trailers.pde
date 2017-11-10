@@ -7,8 +7,8 @@ boolean record = false;
 boolean withFx = false;
 
 void setup() {
-  //size(640,640,P3D);
-  fullScreen(P3D);
+  size(640,640,P3D);
+  //fullScreen(P3D);
   stroke(255,255,255,255/3);
   fill(255);
   setupFx();
@@ -41,7 +41,7 @@ void draw() {
 
 
 void save() {
-  saveImage(frameWithFx(withFx, width*2,height*2));
+  saveImage(backdrop(frameWithFx(withFx, width*2,height*2)));
 }
 
 void keyPressed() {
