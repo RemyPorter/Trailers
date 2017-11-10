@@ -6,11 +6,15 @@ PVector v(float x, float y) {
 
 class SequenceBuilder {
   Sequence s = new Sequence();
+  int currentColor;
+  public SequenceBuilder() {
+    currentColor = color(255,255,255,100);
+  }
   Sequence sequence() {
     return s;
   }
   SequenceBuilder pen() {
-    return pen(0,0);
+    return pen(0,0,currentColor);
   }
 
   SequenceBuilder anchor(float x, float y) {
@@ -28,7 +32,7 @@ class SequenceBuilder {
   }
 
   SequenceBuilder pen(float x, float y) {
-    return pen(new PVector(x, y), color(255,255,255,100));
+    return pen(new PVector(x, y), currentColor);
   }
 
   SequenceBuilder pen(float x, float y, int col) {
@@ -86,6 +90,14 @@ class SequenceBuilder {
 
   SequenceBuilder sin(float x, float y, float scaleX, float scaleY, float speed) {
     s.add(new SinTranslator(new PVector(x,y), scaleX, scaleY, speed));
+    return this;
+  }
+  SequenceBuilder col(int col) {
+    currentColor = col;
+    return this;
+  }
+  SequenceBuilder col(int r, int g, int b, int a) {
+    currentColor = color(r,g,b,a);
     return this;
   }
 }
