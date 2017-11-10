@@ -159,3 +159,32 @@ class RingBuffer<T> {
     return content.get(last);
   }
 }
+
+class Ellipse implements Transform {
+  float major, minor, speed, x;
+  int dir = 1;
+  PVector center;
+  public Ellipse(PVector center, float major, float minor, float speed) {
+    this.center = center;
+    this.major = major;
+    this.minor = minor;
+    this.speed = speed;
+    this.x = 0.00;
+  }
+  public LineSegment draw() {
+    return null;
+  }
+  public void transform() {
+    float y = 0;
+    translate(center.x, center.y);
+    x += speed * dir;
+    if (x >= major || x <= -major) {
+       dir *= -1;
+       x = constrain(x, -major, major);
+    }
+    if (major != 0) {
+      y = minor / major * sqrt(major * major - x * x) ;
+    }
+    translate(x, y * dir);
+  }
+}

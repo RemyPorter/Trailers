@@ -74,4 +74,9 @@ class SequenceBuilder {
     s.add(pa);
     return this;
   }
+
+  SequenceBuilder ellipse(float x, float y, float major, float minor, float speed) {
+    s.add(new Ellipse(v(x,y),major,minor,speed));
+    return this;
+  }
 }
