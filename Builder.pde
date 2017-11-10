@@ -1,4 +1,5 @@
 import java.awt.Rectangle;
+import java.util.Collection;
 
 PVector v(float x, float y) {
   return new PVector(x, y);
@@ -7,14 +8,16 @@ PVector v(float x, float y) {
 class SequenceBuilder {
   Sequence s = new Sequence();
   int currentColor;
+  Palette p;
   public SequenceBuilder() {
     currentColor = color(255,255,255,100);
+    p = new Palette();
+  }
+  public SequenceBuilder(Palette p) {
+    this.p = p;
   }
   Sequence sequence() {
     return s;
-  }
-  SequenceBuilder pen() {
-    return pen(0,0,currentColor);
   }
 
   SequenceBuilder anchor(float x, float y) {
@@ -24,6 +27,24 @@ class SequenceBuilder {
   SequenceBuilder anchor(PVector disp) {
     s.add(new Anchor(disp));
     return this;
+  }
+
+  SequenceBuilder col(int col) {
+    currentColor = col;
+    return this;
+  }
+  SequenceBuilder col(int r, int g, int b, int a) {
+    currentColor = color(r,g,b,a);
+    return this;
+  }
+
+  SequenceBuilder col(String name) {
+    currentColor = p.fetch(name);
+    return this;
+  }
+
+  SequenceBuilder pen() {
+    return pen(0,0,currentColor);
   }
 
   SequenceBuilder pen(PVector pos, int col) {
@@ -39,11 +60,26 @@ class SequenceBuilder {
     return pen(new PVector(x,y), col);
   }
 
+  SequenceBuilder pen(float x, float y, String name) {
+    return pen(x,y,p.fetch(name));
+  }
+
   SequenceBuilder pens(PVector pos, PVector step, int n) {
     s.add(new Pen(pos, color(255,255,255,100)));
     for (int i = 1; i < n; i++) {
       pos = PVector.add(pos, step);
       s.add(new Pen(pos, color(255,255,255,100)));
+    }
+    return this;
+  }
+
+  SequenceBuilder pens(PVector pos, PVector step) {
+    Collection<Integer> colors = p.values();
+    if (colors.size() < 0) return pens(pos, step, 3);
+    PVector root = pos;
+    for (int c : colors) {
+      pen(root, c);
+      root = PVector.add(root, step);
     }
     return this;
   }
@@ -90,14 +126,6 @@ class SequenceBuilder {
 
   SequenceBuilder sin(float x, float y, float scaleX, float scaleY, float speed) {
     s.add(new SinTranslator(new PVector(x,y), scaleX, scaleY, speed));
-    return this;
-  }
-  SequenceBuilder col(int col) {
-    currentColor = col;
-    return this;
-  }
-  SequenceBuilder col(int r, int g, int b, int a) {
-    currentColor = color(r,g,b,a);
     return this;
   }
 }
