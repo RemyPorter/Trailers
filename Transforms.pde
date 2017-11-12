@@ -2,6 +2,7 @@ import java.awt.Rectangle;
 
 interface Transform {
   void transform();
+  void tick();
   LineSegment draw();
 }
 
@@ -15,6 +16,9 @@ class Pen implements Transform {
   }
   public void transform() {
     //translate(offset.x, offset.y);
+  }
+  void tick() {
+
   }
   public LineSegment draw() {
     PVector p = new PVector(modelX(offset.x, offset.y, 0), modelY(offset.x, offset.y, 0));
@@ -40,6 +44,9 @@ class Anchor implements Transform {
   public void transform() {
     translate(disp.x, disp.y);
   }
+  void tick() {
+
+  }
 }
 
 class Translator implements Transform {
@@ -54,14 +61,16 @@ class Translator implements Transform {
   public Translator(PVector velocity) {
     this(new PVector(0,0), velocity, new Rectangle(0,0,640,640));
   }
-  
-  public void transform() {
+  void tick() {
     disp.add(vel);
     if (bounds.width + bounds.x < disp.x || bounds.x > disp.x) {
       vel.x *= -1;
     } else if (bounds.height + bounds.y < disp.y || bounds.y > disp.y) {
       vel.y *= -1;
     }
+  }
+  
+  public void transform() {
     translate(disp.x, disp.y);
   }
   public LineSegment draw() {
@@ -84,9 +93,11 @@ class Rotator implements Transform {
   public LineSegment draw() {
     return null;
   }
+  void tick() {
+    defl += speed;
+  }
   public void transform() {
     translate(center.x, center.y);
-    defl += speed;
     rotate(defl);
   }
 }
@@ -113,7 +124,7 @@ class Path implements Transform{
   public LineSegment draw() {
     return null;
   }
-  public void transform() {
+  void tick() {
     if (points.size() < 1) return;
     if (lastPoint == null) {
       lastPoint = points.moveNext();
@@ -134,6 +145,8 @@ class Path implements Transform{
       lastPoint = PVector.lerp(origin, target, step);
       count++;
     }
+  }
+  public void transform() {
     translate(lastPoint.x, lastPoint.y);
   }
 }
@@ -161,7 +174,7 @@ class RingBuffer<T> {
 }
 
 class Ellipse implements Transform {
-  float major, minor, speed, x;
+  float major, minor, speed, x, y;
   int dir = 1;
   PVector center;
   public Ellipse(PVector center, float major, float minor, float speed) {
@@ -174,9 +187,7 @@ class Ellipse implements Transform {
   public LineSegment draw() {
     return null;
   }
-  public void transform() {
-    float y = 0;
-    translate(center.x, center.y);
+  void tick() {
     x += speed * dir;
     if (x >= major || x <= -major) {
        dir *= -1;
@@ -185,6 +196,9 @@ class Ellipse implements Transform {
     if (major != 0) {
       y = minor / major * sqrt(major * major - x * x) ;
     }
+  }
+  public void transform() {
+    translate(center.x, center.y);
     translate(x, y * dir);
   }
 }
@@ -199,9 +213,12 @@ class SinTranslator implements Transform{
     this.center = center;
   }
 
+  void tick() {
+    tick += speed;
+  }
+
   public LineSegment draw() { return null; }
   public void transform() {
     translate(center.x + sin(tick) * scaleX, center.y + cos(tick) * scaleY);
-    tick += speed;
   }
 }

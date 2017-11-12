@@ -23,6 +23,7 @@ class Sequence {
     int pops = 0;
     for (Transform s : steps) {
       pushMatrix();
+      s.tick();
       s.transform();
       add(s.draw());
       pops++;
