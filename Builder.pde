@@ -10,14 +10,19 @@ class SequenceBuilder {
   int currentColor;
   Palette p;
   public SequenceBuilder() {
-    currentColor = color(255,255,255,100);
+    currentColor = color(255,255,255,255);
     p = new Palette();
   }
   public SequenceBuilder(Palette p) {
+    currentColor = color(255,255,255,255);
     this.p = p;
   }
   Sequence sequence() {
     return s;
+  }
+
+  void add(Transform t) {
+    s.add(t);
   }
 
   SequenceBuilder anchor(float x, float y) {
@@ -25,7 +30,7 @@ class SequenceBuilder {
   }
 
   SequenceBuilder anchor(PVector disp) {
-    s.add(new Anchor(disp));
+    add(new Anchor(disp));
     return this;
   }
 
@@ -48,7 +53,7 @@ class SequenceBuilder {
   }
 
   SequenceBuilder pen(PVector pos, int col) {
-    s.add(new Pen(pos, col));
+    add(new Pen(pos, col));
     return this;
   }
 
@@ -65,10 +70,10 @@ class SequenceBuilder {
   }
 
   SequenceBuilder pens(PVector pos, PVector step, int n) {
-    s.add(new Pen(pos, color(255,255,255,100)));
+    add(new Pen(pos, color(255,255,255,100)));
     for (int i = 1; i < n; i++) {
       pos = PVector.add(pos, step);
-      s.add(new Pen(pos, color(255,255,255,100)));
+      add(new Pen(pos, color(255,255,255,100)));
     }
     return this;
   }
@@ -85,7 +90,7 @@ class SequenceBuilder {
   }
 
   SequenceBuilder translator(PVector disp, PVector vel, Rectangle bounds) {
-    s.add(new Translator(disp, vel, bounds));
+    add(new Translator(disp, vel, bounds));
     return this;
   }
 
@@ -106,7 +111,7 @@ class SequenceBuilder {
   }
 
   SequenceBuilder rotator(PVector p, float speed) {
-    s.add(new Rotator(p, speed));
+    add(new Rotator(p, speed));
     return this;
   }
 
@@ -115,17 +120,23 @@ class SequenceBuilder {
     for (PVector p : points) {
       pa.point(p);
     }
-    s.add(pa);
+    add(pa);
     return this;
   }
 
   SequenceBuilder ellipse(float x, float y, float major, float minor, float speed) {
-    s.add(new Ellipse(v(x,y),major,minor,speed));
+    add(new Ellipse(v(x,y),major,minor,speed));
     return this;
   }
 
   SequenceBuilder sin(float x, float y, float scaleX, float scaleY, float speed) {
-    s.add(new SinTranslator(new PVector(x,y), scaleX, scaleY, speed));
+    add(new SinTranslator(new PVector(x,y), scaleX, scaleY, speed));
+    return this;
+  }
+
+  SequenceBuilder ratchet(int frames) {
+    Transform last = s.steps.get(s.steps.size() - 1);
+    s.steps.set(s.steps.size() - 1, new Ratchet(last, frames));
     return this;
   }
 }

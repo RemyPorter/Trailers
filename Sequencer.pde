@@ -16,6 +16,7 @@ class LineSegment {
 class Sequence {
   ArrayList<Transform> steps = new ArrayList<Transform>();
   ArrayList<LineSegment> lines = new ArrayList<LineSegment>();
+
   void add(LineSegment ls) {
     if (ls != null) lines.add(ls);
   }

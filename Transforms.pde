@@ -114,6 +114,7 @@ class Path implements Transform{
     this.speed = speed;
   }
   public Path point(PVector p) {
+    if (lastPoint == null) lastPoint = p;
     points.add(p);
     return this;
   }
