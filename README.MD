@@ -26,14 +26,46 @@ In `SetupSystem.pde` there are two methods, `buildSequence` and `buildFilters`. 
 Check [SampleSequences](SampleSequences.md) for examples.
 
 #### SequenceBuilder
-The `SequenceBuilder` API has the following methods:
+##### Using the sequence builder
+The sequence builder is your tool for constructing sequences. It is a fluent API, which allows you to construct a chain of transformations.
 
-* rotator(x,y,radians) : a rotate transformation, centered on x/y, rotating a specified number of radians a second
-* translator(x,y,dx,dy,bx,by,bw,bh) : a translate transformation that starts at position x/y, moves dx/dy with each frame, but always remains in a rectangle defined by bx/by/bw/bh (boundaries defined as a java.awt.Rectangle)
-* path(speed, ...points) : A path that traces a loop through a series of points at speed. Use the `v(x,y)` convenience function to define a point, eg: `.path(0.15, v(0,0), v(0,10), v(10,10))`
-* anchor(x,y) : a translate transformation that doesn't continue to move after the fact
-* pen(x,y) : a pen, which draws, at the offset specified
-* sequence() : convert this builder process to a sequence object (final step in the chain)
+##### Constructing your SequenceBuilder
+You can create a `SequenceBuilder` with two different constructors:
+
+* `SequenceBuilder()` : creates a `SequenceBuilder` with a default color of pure white, and no palette applied.
+* `SequenceBuilder(Palette p)`: creates a `SequenceBuilder`, also with a default color of white, but with aa palette available. This palette object can control pens and colors.
+
+This initiates the construction of a sequence. Once the sequence is built, the `sequence()` method ends the chain and returns it.
+
+##### Building Transformation Chains
+The core job of your sequencer is to construct a matrix through a series of transforms. Each of these methods returns a `SequenceBuilder` object, making this a fluent API.
+
+* `anchor(x,y)`/`anchor(PVector p)` : a simple translation
+* `translator(float x, float y, float dx, float dy, float bx, float by, int w, int h)` : this awkward method signature defines a point (x/y), and a velocity (dx/dy). This point is contained in a box, defined by (bx,by,w,h). When the point strikes the edge of the box, it reflects. Boundaries need to be defined relative to the origin of the point.
+* `translator(PVector point, PVector vel, Rectangle r)` : same as above, but using vectors/rectangles to define the boundaries
+* `rotator()` : create a rotating transformation centered at (0,0) with a speed of 0.125 radians / frame.
+* `rotator(float x, float y, float speed)`/`rotator(PVector p, float speed)` : create a rotating transformation centered at the point given, rotating with the speed, in radians per frame.
+* `path(float speed, PVector... points)` : define a path, and then translate along that path, based on the speed. Use the convenience function `v(x,y)` to define points, eg: `.path(0.15, v(0,0), v(0,10), v(10,10))`
+* `ellipse(float x, float y, float major, float minor, float speed)`: translate along points that fall on an ellipse, centered at x/y, with radii major/minor. Speed is the delta-x on the boundary of the ellipse, per frame.
+* `sin(float x, float y, float scaleX, float scaleY, float speed)` : a sin/cos translator. X is controlled by sin, Y is controlled by cos. Points are centered on x/y, and the output of the sin/cos function is scaled by scaleX/scaleY. Speed is delta-radians per frame.
+
+##### Wrapper Transfomations
+There are "special" transform methods which alter the last added transformation to the chain.
+
+* `ratchet(int frames)` : a "sleep" or "stutter" function. As most transforms are time based, this adds stutter to that timing. Instead of ticking every frame, it ticks after `frames` have passed. It then ticks forward the same number of frames, meaning it catches up with where it was supposed to be.
+
+##### Pens
+None of the transforms are useful unless you draw something, which is where pens come into play. Pens trace a line through the points they visit, providing the sequence with what should be drawn.
+
+* `col(int col)`: set the default color for the next pens on the chain. This is the default color until the `col` method is called again. The parameter is the Processing color value.
+* `col(int r, int g, int b, int a)`: same as above, but defined by its color components.
+* `col(String name)`: same as above, but gets the color from the current palette, by name. 
+* `pen()`: adds a pen at the *current* origin in the transform matrix, with the current color as its color.
+* `pen(PVector pos, int col)` : add a new pen, translated by pos, with color `col`
+* `pen(float x, float y, int col)` : same as above
+* `pen(float x, float y, String name)` : a new pen, at x/y, with a named color from our palette
+* `pens(PVector pos, PVector step, int n)` : add `n` pens, starting at `pos`, then translating by `step` before each added pen
+* `pens(PVector pos, PVectorr step)` : adds one pen for each color in the palette.
 
 #### FilterChain
 The `FilterChain` is a set of post-processing filters, applied to the image-to-be-drawn in sequence. You can construct a filter chain with the following methods:
