@@ -53,6 +53,7 @@ The core job of your sequencer is to construct a matrix through a series of tran
 There are "special" transform methods which alter the last added transformation to the chain.
 
 * `ratchet(int frames)` : a "sleep" or "stutter" function. As most transforms are time based, this adds stutter to that timing. Instead of ticking every frame, it ticks after `frames` have passed. It then ticks forward the same number of frames, meaning it catches up with where it was supposed to be.
+* `ramp(float step, float max)` : cause the wrapped transform to "tick" n\*step times in each frame, where n is the number of frames. When n\*step = max, n resets to zero.
 
 ##### Pens
 None of the transforms are useful unless you draw something, which is where pens come into play. Pens trace a line through the points they visit, providing the sequence with what should be drawn.

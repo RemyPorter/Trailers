@@ -32,3 +32,22 @@ class Ratchet extends BaseWrapper {
     }
   }
 }
+
+class Ramp extends BaseWrapper {
+  float max,step,i;
+  public Ramp(Transform wrapped, float step, float max) {
+    super(wrapped);
+    this.step = step;
+    this.max = max;
+    this.i = 0;
+  }
+
+  void tick() {
+    i += step;
+    if (i > max) i = 0;
+    if (i < 0) i = max;
+    for (int j = 0; j < i; j++) {
+      wrapped.tick();
+    }
+  }
+}

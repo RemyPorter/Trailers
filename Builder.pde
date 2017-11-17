@@ -134,9 +134,23 @@ class SequenceBuilder {
     return this;
   }
 
+  private Transform getLast() {
+    return s.steps.get(s.steps.size() - 1);
+  }
+
+  private void setLast(Transform t) {
+    s.steps.set(s.steps.size() - 1, t);
+  }
+
   SequenceBuilder ratchet(int frames) {
-    Transform last = s.steps.get(s.steps.size() - 1);
-    s.steps.set(s.steps.size() - 1, new Ratchet(last, frames));
+    Transform last = getLast();
+    setLast(new Ratchet(last, frames));
+    return this;
+  }
+
+  SequenceBuilder ramp(float step, float max) {
+    Transform last = getLast();
+    setLast(new Ramp(last, step, max));
     return this;
   }
 }
