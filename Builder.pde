@@ -6,17 +6,24 @@ PVector v(float x, float y) {
 }
 
 class SequenceBuilder {
-  Sequence s = new Sequence();
+  Sequence s;
   int currentColor;
   Palette p;
-  public SequenceBuilder() {
-    currentColor = color(255,255,255,255);
-    p = new Palette();
-  }
-  public SequenceBuilder(Palette p) {
+  public SequenceBuilder(int numSteps, Palette p) {
+    s = new Sequence(numSteps);
     currentColor = color(255,255,255,255);
     this.p = p;
   }
+  public SequenceBuilder() {
+    this(Integer.MAX_VALUE, new Palette());
+  }
+  public SequenceBuilder(int numSteps) {
+    this(numSteps, new Palette());
+  }
+  public SequenceBuilder(Palette p) {
+    this(Integer.MAX_VALUE, p);
+  }
+
   Sequence sequence() {
     return s;
   }

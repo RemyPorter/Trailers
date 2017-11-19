@@ -16,9 +16,18 @@ class LineSegment {
 class Sequence {
   ArrayList<Transform> steps = new ArrayList<Transform>();
   ArrayList<LineSegment> lines = new ArrayList<LineSegment>();
+  int numSteps = Integer.MAX_VALUE;
+
+  public Sequence() {}
+  public Sequence(int numSteps) {
+    this.numSteps = numSteps;
+  }
 
   void add(LineSegment ls) {
     if (ls != null) lines.add(ls);
+    if (lines.size() > numSteps) {
+      lines.remove(0);
+    }
   }
   void build() {
     int pops = 0;
