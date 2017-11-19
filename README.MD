@@ -55,6 +55,17 @@ There are "special" transform methods which alter the last added transformation 
 * `ratchet(int frames)` : a "sleep" or "stutter" function. As most transforms are time based, this adds stutter to that timing. Instead of ticking every frame, it ticks after `frames` have passed. It then ticks forward the same number of frames, meaning it catches up with where it was supposed to be.
 * `ramp(float step, float max)` : cause the wrapped transform to "tick" n\*step times in each frame, where n is the number of frames. When n\*step = max, n resets to zero.
 
+##### OscWrappers
+In addition to being able to wrap some basic modifiers around transforms, these transforms can also be wrapped in OpenSoundControl-based controllers, allowing audio software to send messages to the application.
+
+*This is a white-box API, which means you need to know the names of fields exposed by the wrapped transform. It's basically useless without knowing details about the implementation of the underlying Transform. I may or may not change that in the future.*
+
+All of these transforms *unwrap* any previously wrapped transforms, that is to say they can only control *base* transforms- `rotator`, `sin`, `pen`, but not `ramp` or `ratchet`.
+
+* `osc(String addr, String... mappings)` : listens for an OSC message sent to `addr`. Upon receiving that message, it will take the first `mappings` entry, the first field on the message, and set the property of the underlying transform with the `mappings` name equal to that value. It repeats that for each other mapping, and it will throw an exception if you don't have at least as many fields on the OSC message as there are in the `mappings` set.
+* `oscColor(String addr)` : May only be applied to a `Pen`. Listens for an OSC message sent to `addr`. That message must contain 4 floating point values. Changes the pen color to those values, using (rgba). These values should be between 0 and 1.
+* `oscColor(String addr, Palette p)` : May only be applied to a `Pen`. Listens for an OSC message sent to `addr`. That message should contain a string which is the name of a color in the `Palette p`. Changes the pen color to that value.
+
 ##### Pens
 None of the transforms are useful unless you draw something, which is where pens come into play. Pens trace a line through the points they visit, providing the sequence with what should be drawn.
 

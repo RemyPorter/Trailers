@@ -166,4 +166,16 @@ class SequenceBuilder {
     setLast(new OscWrapper(patt, last, mappings));
     return this;
   }
+
+  SequenceBuilder oscColor(String patt) {
+    Pen last = (Pen)getLast();
+    setLast(new ColorWrapper(patt, last));
+    return this;
+  }
+
+  SequenceBuilder oscColor(String patt, Palette p) {
+    Pen last = (Pen)getLast();
+    setLast(new PaletteWrapper(patt, p, last));
+    return this;
+  }
 }

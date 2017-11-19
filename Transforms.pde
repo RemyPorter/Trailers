@@ -20,6 +20,12 @@ class Pen implements Transform {
   void tick() {
 
   }
+  public void setColor(float r, float g, float b, float a) {
+    this.col = color(r*255,g*255,b*255,a*255);
+  }
+  public void setColor(int c) {
+    this.col = c;
+  }
   public LineSegment draw() {
     PVector p = new PVector(modelX(offset.x, offset.y, 0), modelY(offset.x, offset.y, 0));
     if (lastPos == null) {

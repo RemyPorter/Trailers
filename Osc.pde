@@ -48,6 +48,41 @@ class OscWrapper extends BaseWrapper implements OscObserver {
   }
 }
 
+class ColorWrapper extends BaseWrapper implements OscObserver {
+  public ColorWrapper(String addr, Transform wrapped) {
+    super(wrapped);
+    oscHandler.put(addr, this);
+  }
+
+  void handleMessage(OscMessage msg) {
+    Transform wrapped = unwrap();
+    if (wrapped instanceof Pen) {
+      float r,g,b,a;
+      r = msg.get(0).floatValue();
+      g = msg.get(1).floatValue();
+      b = msg.get(2).floatValue();
+      a = msg.get(3).floatValue();
+      ((Pen)wrapped).setColor(r,g,b,a);
+    }
+  }
+}
+
+class PaletteWrapper extends ColorWrapper {
+  Palette p;
+  public PaletteWrapper(String addr, Palette p, Transform wrapped) {
+    super(addr, wrapped);
+    this.p = p;
+  }
+
+  void handleMessage(OscMessage msg) {
+    Transform wrapped = unwrap();
+    if (wrapped instanceof Pen) {
+      String name = msg.get(0).stringValue();
+      ((Pen)wrapped).setColor(p.fetch(name));
+    }
+  }
+}
+
 class LoggingHandler implements OscObserver {
   public LoggingHandler() {
     oscHandler.put("/hello/world", this);
