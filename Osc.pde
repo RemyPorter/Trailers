@@ -1,5 +1,6 @@
 import netP5.*;
 import oscP5.*;
+import java.lang.reflect.Field;
 
 interface OscObserver {
   void handleMessage(OscMessage msg);
@@ -19,14 +20,31 @@ void oscEvent(OscMessage msg) {
   oscHandler.handleMessage(msg);
 }
 
-class BaseObserver extends BaseWrapper implements OscObserver {
-  public BaseObserver(String addr, Transform wrapped) {
+class OscWrapper extends BaseWrapper implements OscObserver {
+  String[] mappings;
+  public OscWrapper(String addr, Transform wrapped, String... mappings) {
     super(wrapped);
     oscHandler.put(addr, this);
+    this.mappings = mappings;
   }
 
   void handleMessage(OscMessage msg) {
-    
+    Transform wrapped = unwrap();
+    try {
+      int i = 0;
+      for (String name : mappings) {
+        Field f = wrapped.getClass().getDeclaredField(name); //<>//
+        OscArgument value = msg.get(i);
+        if (value != null) {
+          f.setFloat(wrapped, value.floatValue());
+        } else {
+          return;
+        }
+        i++;
+      }
+    } catch (Exception ex) {
+      println("Check your mappings on your OSC Wrapper", ex.getMessage());
+    }
   }
 }
 

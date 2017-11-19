@@ -1,5 +1,8 @@
 class BaseWrapper implements Transform {
   Transform wrapped;
+  public Transform getWrapped() {
+    return wrapped;
+  }
   public BaseWrapper(Transform wrapped) {
     this.wrapped = wrapped;
   }
@@ -11,6 +14,13 @@ class BaseWrapper implements Transform {
   }
   LineSegment draw() {
     return wrapped.draw();
+  }
+  Transform unwrap() { //we sometimes need a REAL instance of a transform to access its properties
+    Transform w = this.wrapped;
+    while(w instanceof BaseWrapper) {
+      w = ((BaseWrapper)this.wrapped).getWrapped();
+    }
+    return w;
   }
 }
 

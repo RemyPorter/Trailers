@@ -153,4 +153,10 @@ class SequenceBuilder {
     setLast(new Ramp(last, step, max));
     return this;
   }
+
+  SequenceBuilder osc(String patt, String... mappings) {
+    Transform last = getLast();
+    setLast(new OscWrapper(patt, last, mappings));
+    return this;
+  }
 }

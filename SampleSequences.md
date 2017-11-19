@@ -80,3 +80,15 @@ Replace the code in `SetupSystem.pde#buildSequence` with one of these examples t
     .pen(-50,-400)
     .sequence();
   ```
+
+  **An OSC Controlled Sequence**
+
+  ```
+  return new SequenceBuilder()
+    .anchor(center)
+    .rotator(0,0,-0.005)
+    .osc("/test/speed", "speed")
+    .rotator(100,0,-0.009)
+    .pen(100,0)
+    .sequence();
+```
