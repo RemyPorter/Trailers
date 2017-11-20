@@ -6,12 +6,28 @@ interface Transform {
   LineSegment draw();
 }
 
-class Pen implements Transform {
-  PVector offset;
+interface Speedable extends Transform {
+  float getSpeed();
+  void setSpeed(float speed);
+}
+
+interface Positionable extends Transform {
+  PVector getPos();
+  void setPos(PVector pos);
+}
+
+interface Colorable extends Transform {
+  int col = 255;
+  void setColor(float r, float g, float b, float a);
+  void setColor(int col);
+}
+
+class Pen implements Positionable, Colorable {
+  PVector pos;
   PVector lastPos;
   int col;
   public Pen(PVector offset, int col) {
-    this.offset = offset;
+    this.pos = offset;
     this.col = col;
   }
   public void transform() {
@@ -26,8 +42,14 @@ class Pen implements Transform {
   public void setColor(int c) {
     this.col = c;
   }
+  public void setPos(PVector pos) {
+    this.pos = pos;
+  }
+  public PVector getPos() {
+    return this.pos;
+  }
   public LineSegment draw() {
-    PVector p = new PVector(modelX(offset.x, offset.y, 0), modelY(offset.x, offset.y, 0));
+    PVector p = new PVector(modelX(pos.x, pos.y, 0), modelY(pos.x, pos.y, 0));
     if (lastPos == null) {
       lastPos = p;
     }
@@ -39,45 +61,57 @@ class Pen implements Transform {
   }
 }
 
-class Anchor implements Transform {
-  PVector disp;
+class Anchor implements Positionable {
+  PVector pos;
   public Anchor(PVector disp) {
-    this.disp = disp;
+    this.pos = disp;
   }
   public LineSegment draw() {
     return null;
   }
   public void transform() {
-    translate(disp.x, disp.y);
+    translate(pos.x, pos.y);
+  }
+  public void setPos(PVector pos) {
+    this.pos = pos;
+  }
+  public PVector getPos() {
+    return this.pos;
   }
   void tick() {
 
   }
 }
 
-class Translator implements Transform {
-  PVector disp;
+class Translator implements Positionable {
+  PVector pos;
   PVector vel;
   Rectangle bounds;
   public Translator(PVector disp, PVector vel, Rectangle bounds) {
-    this.disp = disp;
+    this.pos = disp;
     this.vel = vel;
     this.bounds = bounds;
   }
   public Translator(PVector velocity) {
     this(new PVector(0,0), velocity, new Rectangle(0,0,640,640));
   }
+  public void setPos(PVector pos) {
+    this.pos = pos;
+  }
+  public PVector getPos() {
+    return this.pos;
+  }
   void tick() {
-    disp.add(vel);
-    if (bounds.width + bounds.x < disp.x || bounds.x > disp.x) {
+    pos.add(vel);
+    if (bounds.width + bounds.x < pos.x || bounds.x > pos.x) {
       vel.x *= -1;
-    } else if (bounds.height + bounds.y < disp.y || bounds.y > disp.y) {
+    } else if (bounds.height + bounds.y < pos.y || bounds.y > pos.y) {
       vel.y *= -1;
     }
   }
   
   public void transform() {
-    translate(disp.x, disp.y);
+    translate(pos.x, pos.y);
   }
   public LineSegment draw() {
     //rect(bounds.x, bounds.y, bounds.w, bounds.h);
@@ -85,15 +119,15 @@ class Translator implements Transform {
   }
 }
 
-class Rotator implements Transform {
+class Rotator implements Speedable, Positionable {
   float defl = 0;
-  float speed;
-  PVector center;
+  public float speed;
+  PVector pos;
   public Rotator(float speed) {
     this(new PVector(0,0), speed);
   }
   public Rotator(PVector center, float speed) {
-    this.center = center;
+    this.pos = center;
     this.speed = speed;
   }
   public LineSegment draw() {
@@ -103,14 +137,26 @@ class Rotator implements Transform {
     defl += speed;
   }
   public void transform() {
-    translate(center.x, center.y);
+    translate(pos.x, pos.y);
     rotate(defl);
+  }
+  public void setPos(PVector pos) {
+    this.pos = pos;
+  }
+  public PVector getPos() {
+    return this.pos;
+  }
+  public float getSpeed() {
+    return this.speed;
+  }
+  public void setSpeed(float speed) {
+    this.speed = speed;
   }
 }
 
-class Path implements Transform{
+class Path implements Speedable {
   RingBuffer<PVector> points = new RingBuffer<PVector>();
-  float speed;
+  public float speed;
   float lerp = 0;
   PVector origin;
   PVector lastPoint;
@@ -156,6 +202,12 @@ class Path implements Transform{
   public void transform() {
     translate(lastPoint.x, lastPoint.y);
   }
+  public float getSpeed() {
+    return this.speed;
+  }
+  public void setSpeed(float speed) {
+    this.speed = speed;
+  }
 }
 
 class RingBuffer<T> {
@@ -180,12 +232,13 @@ class RingBuffer<T> {
   }
 }
 
-class Ellipse implements Transform {
-  float major, minor, speed, x, y;
+class Ellipse implements Speedable, Positionable {
+  float major, minor, x, y;
+  public float speed;
   int dir = 1;
-  PVector center;
+  PVector pos;
   public Ellipse(PVector center, float major, float minor, float speed) {
-    this.center = center;
+    this.pos = center;
     this.major = major;
     this.minor = minor;
     this.speed = speed;
@@ -205,19 +258,32 @@ class Ellipse implements Transform {
     }
   }
   public void transform() {
-    translate(center.x, center.y);
+    translate(pos.x, pos.y);
     translate(x, y * dir);
+  }
+  public void setPos(PVector pos) {
+    this.pos = pos;
+  }
+  public PVector getPos() {
+    return this.pos;
+  }
+  public float getSpeed() {
+    return this.speed;
+  }
+  public void setSpeed(float speed) {
+    this.speed = speed;
   }
 }
 
-class SinTranslator implements Transform{
-  float scaleX, scaleY, tick, speed;
-  PVector center;
+class SinTranslator implements Speedable, Positionable{
+  float scaleX, scaleY, tick;
+  public float speed;
+  PVector pos;
   public SinTranslator(PVector center, float scaleX, float scaleY, float speed) {
     this.scaleX = scaleX;
     this.scaleY = scaleY;
     this.speed = speed;
-    this.center = center;
+    this.pos = center;
   }
 
   void tick() {
@@ -226,6 +292,18 @@ class SinTranslator implements Transform{
 
   public LineSegment draw() { return null; }
   public void transform() {
-    translate(center.x + sin(tick) * scaleX, center.y + cos(tick) * scaleY);
+    translate(pos.x + sin(tick) * scaleX, pos.y + cos(tick) * scaleY);
+  }
+  public void setPos(PVector pos) {
+    this.pos = pos;
+  }
+  public PVector getPos() {
+    return this.pos;
+  }
+  public float getSpeed() {
+    return this.speed;
+  }
+  public void setSpeed(float speed) {
+    this.speed = speed;
   }
 }

@@ -168,13 +168,13 @@ class SequenceBuilder {
   }
 
   SequenceBuilder oscColor(String patt) {
-    Pen last = (Pen)getLast();
+    Transform last = getLast();
     setLast(new ColorWrapper(patt, last));
     return this;
   }
 
   SequenceBuilder oscColor(String patt, Palette p) {
-    Pen last = (Pen)getLast();
+    Transform last = getLast();
     setLast(new PaletteWrapper(patt, p, last));
     return this;
   }

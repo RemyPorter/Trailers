@@ -56,13 +56,13 @@ class ColorWrapper extends BaseWrapper implements OscObserver {
 
   void handleMessage(OscMessage msg) {
     Transform wrapped = unwrap();
-    if (wrapped instanceof Pen) {
+    if (wrapped instanceof Colorable) {
       float r,g,b,a;
       r = msg.get(0).floatValue();
       g = msg.get(1).floatValue();
       b = msg.get(2).floatValue();
       a = msg.get(3).floatValue();
-      ((Pen)wrapped).setColor(r,g,b,a);
+      ((Colorable)wrapped).setColor(r,g,b,a);
     }
   }
 }
@@ -76,9 +76,9 @@ class PaletteWrapper extends ColorWrapper {
 
   void handleMessage(OscMessage msg) {
     Transform wrapped = unwrap();
-    if (wrapped instanceof Pen) {
+    if (wrapped instanceof Colorable) {
       String name = msg.get(0).stringValue();
-      ((Pen)wrapped).setColor(p.fetch(name));
+      ((Colorable)wrapped).setColor(p.fetch(name));
     }
   }
 }
