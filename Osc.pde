@@ -83,6 +83,40 @@ class PaletteWrapper extends ColorWrapper {
   }
 }
 
+class PositionWrapper extends OscWrapper {
+  PVector momentum = new PVector(0,0);
+  float friction;
+  public PositionWrapper(String addr, float friction, Transform wrapped) {
+    super(addr, wrapped);
+    this.friction = friction;
+  }
+
+  void tick() {
+    momentum.mult(1.0 - friction);
+    Positionable wrapped = (Positionable)unwrap();
+    wrapped.getPos().add(momentum);
+    super.tick();
+  }
+
+  public void handleMessage(OscMessage msg) {
+    float x = msg.get(0).floatValue();
+    float y = msg.get(1).floatValue();
+    momentum.add(new PVector(x,y));
+  }
+}
+
+class SpeedWrapper extends OscWrapper {
+  public SpeedWrapper(String addr, Transform wrapped) {
+    super(addr, wrapped);
+  }
+
+  public void handleMessage(OscMessage msg) {
+    float speed = msg.get(0).floatValue();
+    Speedable wrapped = (Speedable)unwrap();
+    wrapped.setSpeed(speed);
+  }
+}
+
 class LoggingHandler implements OscObserver {
   public LoggingHandler() {
     oscHandler.put("/hello/world", this);

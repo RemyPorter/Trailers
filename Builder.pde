@@ -178,4 +178,16 @@ class SequenceBuilder {
     setLast(new PaletteWrapper(patt, p, last));
     return this;
   }
+
+  SequenceBuilder oscMomentum(String patt, float friction) {
+    Transform last = getLast();
+    setLast(new PositionWrapper(patt, friction, last));
+    return this;
+  }
+
+  SequenceBuilder oscSpeed(String patt) {
+    Transform last = getLast();
+    setLast(new SpeedWrapper(patt, last));
+    return this;
+  }
 }
