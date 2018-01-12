@@ -36,3 +36,8 @@ Palette vaporwave = new Palette()
   .col("a", 243,147,201,100)
   .col("b", 186,245, 68,100)
   .col("c", 255,163, 71,100);
+
+Palette nomad = new Palette()
+    .col("p", #7237AC)
+    .col("c", #34C34D)
+    .col("a", #FFA744);
