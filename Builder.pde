@@ -190,4 +190,10 @@ class SequenceBuilder {
     setLast(new SpeedWrapper(patt, last));
     return this;
   }
+
+  SequenceBuilder delay(int frames, String field, float value) {
+      Transform last = getLast();
+      setLast(new DelayWrapper(last, frames, field, value));
+      return this;
+  }
 }
