@@ -1,4 +1,5 @@
 images/
 data/
 animated/
-*.ignore
+*.ignoresettings.json
+.vscode
