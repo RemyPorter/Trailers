@@ -3,12 +3,14 @@ import java.util.UUID;
 
 boolean running = true;
 Sequence s = null;
-boolean record = false;
+boolean record = true;
 boolean withFx = false;
+boolean frameCounter = false;
+Integer stopAfter = 2880;
 
 void setup() {
-  size(640,640,P3D);
-  //fullScreen(P3D);
+  //size(640,640,P3D);
+  fullScreen(P3D);
   stroke(255,255,255,255/3);
   fill(255);
   setupFx();
@@ -35,6 +37,13 @@ void draw() {
   image(frame, 0, 0);
   if (record) {
     saveFrame("animated/#####.png");
+  }
+  if (stopAfter != null && frameCount >= stopAfter) {
+    System.exit(1);
+  }
+  if (frameCounter) {
+    stroke(#FFFFFF);
+    text(String.format("%2d : %d : %d", frameCount % 60, frameCount / 30 % 4, frameCount / 30 / 4), 30, 30);
   }
 }
 
