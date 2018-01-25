@@ -22,6 +22,13 @@ interface Colorable extends Transform {
   void setColor(int col);
 }
 
+interface Pausable extends Transform {
+    void toggle();
+    void pause();
+    void unpause();
+    boolean isPaused();
+}
+
 class Pen implements Positionable, Colorable {
   PVector pos;
   PVector lastPos;
@@ -119,10 +126,11 @@ class Translator implements Positionable {
   }
 }
 
-class Rotator implements Speedable, Positionable {
+class Rotator implements Speedable, Positionable, Pausable {
   float defl = 0;
   public float speed;
   PVector pos;
+  boolean paused = false;
   public Rotator(float speed) {
     this(new PVector(0,0), speed);
   }
@@ -134,7 +142,9 @@ class Rotator implements Speedable, Positionable {
     return null;
   }
   void tick() {
-    defl += speed;
+    if (!paused) {
+      defl += speed;
+    }
   }
   public void transform() {
     translate(pos.x, pos.y);
@@ -152,11 +162,24 @@ class Rotator implements Speedable, Positionable {
   public void setSpeed(float speed) {
     this.speed = speed;
   }
+  void toggle() {
+    this.paused = !this.paused;
+  }
+  void pause() {
+    this.paused = true;
+  }
+  void unpause() {
+    this.paused = false;
+  }
+  boolean isPaused() {
+    return this.paused;
+  }
 }
 
-class Path implements Speedable {
+class Path implements Speedable, Pausable {
   RingBuffer<PVector> points = new RingBuffer<PVector>();
   public float speed;
+  public boolean paused = false;
   float lerp = 0;
   PVector origin;
   PVector lastPoint;
@@ -179,6 +202,7 @@ class Path implements Speedable {
   }
   void tick() {
     if (points.size() < 1) return;
+    if (paused) return;
     if (lastPoint == null) {
       lastPoint = points.moveNext();
       origin = lastPoint;
@@ -207,6 +231,18 @@ class Path implements Speedable {
   }
   public void setSpeed(float speed) {
     this.speed = speed;
+  }
+  public void pause() {
+      this.paused = true;
+  }
+  public void unpause() {
+      this.paused = false;
+  }
+  public void toggle() {
+      this.paused = ! paused;
+  }
+  public boolean isPaused() {
+      return this.paused;
   }
 }
 

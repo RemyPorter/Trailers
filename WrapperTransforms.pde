@@ -18,7 +18,7 @@ class BaseWrapper implements Transform {
   Transform unwrap() { //we sometimes need a REAL instance of a transform to access its properties
     Transform w = this.wrapped;
     while(w instanceof BaseWrapper) {
-      w = ((BaseWrapper)this.wrapped).getWrapped();
+      w = ((BaseWrapper)w).getWrapped();
     }
     return w;
   }

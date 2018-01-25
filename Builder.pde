@@ -196,4 +196,21 @@ class SequenceBuilder {
       setLast(new DelayWrapper(last, frames, field, value));
       return this;
   }
+
+  SequenceBuilder toggle(int frames) {
+      Transform last = getLast();
+      setLast(new PauseDelay(last, frames));
+      return this;
+  }
+
+  SequenceBuilder pause() {
+      Transform last = getLast();
+      try {
+          Pausable p = (Pausable)last;
+          p.pause();
+      } catch (Exception ex) {
+          println(ex.getMessage());
+      }
+      return this;
+  }
 }
